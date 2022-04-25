@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ekraujin <ekraujin@student.42.fr>          +#+  +:+       +#+         #
+#    By: mchatzip <mchatzip@student.42wolfsburg.de> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/03/15 20:17:37 by ekraujin          #+#    #+#              #
-#    Updated: 2022/04/14 13:53:36 by ekraujin         ###   ########.fr        #
+#    Updated: 2022/04/14 17:00:14 by mchatzip         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 

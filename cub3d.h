@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ekraujin <ekraujin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mchatzip <mchatzip@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/15 20:14:39 by ekraujin          #+#    #+#             */
-/*   Updated: 2022/04/14 13:57:25 by ekraujin         ###   ########.fr       */
+/*   Updated: 2022/04/15 12:07:00 by mchatzip         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,9 @@ typedef struct s_ray
 
 typedef struct s_data
 {	
+	bool	f;
+	bool	c;
+	int		ltm;
 	void	*mlx;
 	void	*mlx_win;
 	t_img	*frame;
@@ -85,7 +88,7 @@ typedef struct s_data
 	double	ppos_x;
 	double	ppos_y;
 	char	pdir;
-	char	**textures;
+	char	*textures[4];
 	int		colors[6];
 	int		linestart;
 	int		lineheight;
@@ -112,6 +115,8 @@ size_t	len_no_n(char *s);
 void	my_mlx_pixel_put(t_data *game, int x, int y, int color);
 void	initialize(t_data *game, char **argv);
 void	direction_init(t_data *game);
+void	init_check(t_data *game, int argc, int mfd);
+int		arg_check(t_data *game, int mfd);
 
 //img_init
 void	img_init(t_data *game);
@@ -146,16 +151,21 @@ void	cast_ray(t_data *game, size_t i);
 int		check_map(t_data *game);
 
 // error.c
+char	*skip_tab_n_space(char *s);
+char	*skip_empty_lines(t_data *game, int mfd, char *temp);
 void	invalid_arg(t_data *game);
 void	invalid_top(void);
 void	invalid_map_values(void);
 void	invalid_map(t_data *game);
 void	free_map(t_data *game, int check);
 int		finish_game(t_data *game);
+bool	get_textures_n_colors3(t_data *game, char *line);
+bool	check_if_map(t_data *game, char *temp);
 
 // error2.c
 void	freedirec2(t_data *game);
-bool	get_textures(t_data *game, char const *line, int i);
+bool	get_textures_n_colors(t_data *game, char *line);
+bool	check_validity(char *temp);
 
 // error3.c
 bool	get_colors(t_data *game, char *line, int i);

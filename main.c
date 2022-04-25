@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ekraujin <ekraujin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mchatzip <mchatzip@student.42wolfsburg.de> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/15 20:12:33 by ekraujin          #+#    #+#             */
-/*   Updated: 2022/04/14 13:38:24 by ekraujin         ###   ########.fr       */
+/*   Updated: 2022/04/15 12:16:25 by mchatzip         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-static bool	is_dir(const char *path)
+static void	err_mlx(t_data *game)
 {
-	struct stat	path_stat;
-
-	stat(path, &path_stat);
-	return (S_ISDIR(path_stat.st_mode));
+	freedirec2(game);
+	free_map(game, 0);
+	printf("Error\nmlx decided to fail for some reason\n");
+	exit(1);
 }
 
 int	finish_game(t_data *game)
@@ -37,32 +37,30 @@ static int	key_hook(int keycode, t_data *game)
 	return (0);
 }
 
-static int	arg_check(t_data *game, int mfd)
+int	arg_check(t_data *game, int mfd)
 {
 	char	*temp;
-	int		i;
 	bool	b;
 
-	i = -1;
+	b = 1;
 	if (!ft_strncmp(game->map_file
 			+ (ft_strlen(game->map_file) - 5), ".cub", 5))
 		return (0);
-	while (++i <= 7)
+	while (b)
 	{
-		temp = get_next_line(mfd);
-		if (i <= 3 && ft_strcmp(temp, "\n"))
-			b = get_textures(game, temp, i);
-		else if (i == 5 || i == 6 && ft_strcmp(temp, "\n"))
-			b = get_colors(game, temp, i);
-		else if (i >= 0 && i <= 3)
+		temp = skip_empty_lines(game, mfd, temp);
+		if (!check_validity(temp))
 		{
 			free(temp);
-			return (0);
+			break ;
 		}
+		else
+			b = get_textures_n_colors(game, temp);
 		free(temp);
-		if (!b)
-			return (0);
 	}
+	b = check_if_map(game, temp);
+	if (!b)
+		return (0);
 	return (1);
 }
 
@@ -72,19 +70,17 @@ int	main(int argc, char **argv)
 	int		mfd;
 
 	initialize(&game, argv);
-	mfd = open(game.map_file, O_RDONLY);
-	if (argc != 2 || mfd <= 0 || is_dir(game.map_file)
-		|| !arg_check(&game, mfd))
-		invalid_arg(&game);
-	if (!assign_map(&game, mfd))
-		invalid_map_values();
-	if (!check_map(&game))
-		invalid_map(&game);
-	close(mfd);
-	direction_init(&game);
+	init_check(&game, argc, mfd);
 	game.mlx = mlx_init();
+	if (!game.mlx)
+		err_mlx(&game);
 	game.mlx_win = mlx_new_window
 		(game.mlx, SCREEN_W, SCREEN_H, "cub3d");
+	if (!game.mlx_win)
+	{
+		mlx_destroy_window(game.mlx, game.mlx_win);
+		err_mlx(&game);
+	}
 	img_init(&game);
 	init_map3d(&game);
 	cast_rays2(&game);
